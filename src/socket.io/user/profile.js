@@ -21,7 +21,11 @@ function SocketUser(SocketUser) {
             if (!socket.uid) {
                 throw new Error('[[error:no-privileges]]');
             }
+            // The next line calls a function in a module that has not been updated to TS yet
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
             yield user_1.user.isAdminOrGlobalModOrSelf(socket.uid, data.uid);
+            // The next line calls a function in a module that has not been updated to TS yet
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
             yield user_1.user.checkMinReputation(socket.uid, data.uid, 'min:rep:cover-picture');
             return yield user_1.user.updateCoverPicture(data);
         });
