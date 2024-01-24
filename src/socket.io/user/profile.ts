@@ -1,5 +1,4 @@
-'use strict';
-
+import { Socket } from 'socket.io';
 import * as user from '../../user';
 import * as privileges from '../../privileges';
 import * as plugins from '../../plugins';
@@ -7,26 +6,25 @@ import * as sockets from '..';
 import * as api from '../../api';
 
 export interface SocketUserData {
-    uid: number;
-  }
+    callerUid: string;
+    uid: string;
+}
   
-  export interface SocketUserUpdateCoverData extends SocketUserData {
+export interface SocketUserUpdateCoverData extends SocketUserData {
     cover: string;
-  }
+}
   
-  export interface SocketUserUploadCroppedPictureData extends SocketUserData {
+export interface SocketUserUploadCroppedPictureData extends SocketUserData {
     picture: string;
-  }
-  
-  export interface SocketUserRemoveCoverData extends SocketUserData {}
-  
-  export interface SocketUserToggleBlockData {
+}
+
+export interface SocketUserToggleBlockData {
     blockerUid: number;
     blockeeUid: number;
-  }
+}
 
 export function SocketUser(SocketUser:any) {
-    SocketUser.updateCover = async function (socket, data) {
+    SocketUser.updateCover = async function (socket: SocketUserData, data: SocketUserData) {
         if (!socket.uid) {
             throw new Error('[[error:no-privileges]]');
         }
@@ -35,7 +33,7 @@ export function SocketUser(SocketUser:any) {
         return await user.updateCoverPicture(data);
     };
 
-    SocketUser.uploadCroppedPicture = async function (socket, data) {
+    SocketUser.uploadCroppedPicture = async function (socket: SocketUserData, data: SocketUserData) {
         if (!socket.uid || !(await privileges.users.canEdit(socket.uid, data.uid))) {
             throw new Error('[[error:no-privileges]]');
         }
@@ -45,7 +43,7 @@ export function SocketUser(SocketUser:any) {
         return await user.uploadCroppedPicture(data);
     };
 
-    SocketUser.removeCover = async function (socket, data) {
+    SocketUser.removeCover = async function (socket: SocketUserData, data: SocketUserData) {
         if (!socket.uid) {
             throw new Error('[[error:no-privileges]]');
         }
@@ -60,26 +58,26 @@ export function SocketUser(SocketUser:any) {
         });
     };
 
-    SocketUser.toggleBlock = async function (socket, data) {
+    SocketUser.toggleBlock = async function (socket: SocketUserData, data: SocketUserToggleBlockData) {
         const isBlocked = await user.blocks.is(data.blockeeUid, data.blockerUid);
         await user.blocks.can(socket.uid, data.blockerUid, data.blockeeUid, isBlocked ? 'unblock' : 'block');
         await user.blocks[isBlocked ? 'remove' : 'add'](data.blockeeUid, data.blockerUid);
         return !isBlocked;
     };
 
-    SocketUser.exportProfile = async function (socket, data) {
+    SocketUser.exportProfile = async function (socket: SocketUserData, data: SocketUserData) {
         await doExport(socket, data, 'profile');
     };
 
-    SocketUser.exportPosts = async function (socket, data) {
+    SocketUser.exportPosts = async function (socket: SocketUserData, data: SocketUserData) {
         await doExport(socket, data, 'posts');
     };
 
-    SocketUser.exportUploads = async function (socket, data) {
+    SocketUser.exportUploads = async function (socket: SocketUserData, data: SocketUserData) {
         await doExport(socket, data, 'uploads');
     };
 
-    async function doExport(socket, data, type) {
+    async function doExport(socket, data: SocketUserData, type) {
         sockets.warnDeprecated(socket, 'POST /api/v3/users/:uid/exports/:type');
 
         if (!socket.uid) {
