@@ -1,8 +1,8 @@
-import * as user from '../../user';
-import * as privileges from '../../privileges';
-import * as plugins from '../../plugins';
-import * as sockets from '..';
-import * as api from '../../api';
+import { user } from '../../user';
+import { privileges } from '../../privileges';
+import { plugins } from '../../plugins';
+import { sockets } from '..';
+import { api } from '../../api';
 
 
 export interface SocketUserData {
