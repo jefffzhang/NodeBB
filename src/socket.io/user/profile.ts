@@ -3,16 +3,9 @@ import { privileges } from '../../privileges';
 import { plugins } from '../../plugins';
 import { sockets } from '..';
 import { api } from '../../api';
-import {SocketUser } from '../user';
-import {io, Socket} from "socket.io-client";
-//import * as io from 'socket.io-client'
-import {Server} from "socket.io"
-import { DataContainer } from 'async';
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
-// import { Socket } from 'net';
-// import { Socket, data } from "socket.io-client"
+import { SocketUser } from '../user';
+import { Socket } from 'socket.io-client';
 
-// const socket: SocketIOClient.Socket = io('http://localhost');
 
 type Data = {
     uid: string;
@@ -23,18 +16,18 @@ type Data = {
 
 
 export function SocketUser(SocketUser: SocketUser) {
-    SocketUser.updateCover = async function (socket: SocketUser, data: Data ) {  
+    SocketUser.updateCover = async function (socket: SocketUser, data: Data ) {
         if (!socket.uid) {
                 throw new Error('[[error:no-privileges]]');
-            }
-            // The next line calls a function in a module that has not been updated to TS yet
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-            await user.isAdminOrGlobalModOrSelf(socket.uid, data.uid); 
-            // The next line calls a function in a module that has not been updated to TS yet
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-            await user.checkMinReputation(socket.uid, data.uid, 'min:rep:cover-picture');
-            return await user.updateCoverPicture(data);
-        };
+        }
+        // The next line calls a function in a module that has not been updated to TS yet
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        await user.isAdminOrGlobalModOrSelf(socket.uid, data.uid);
+        // The next line calls a function in a module that has not been updated to TS yet
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        await user.checkMinReputation(socket.uid, data.uid, 'min:rep:cover-picture');
+        return await user.updateCoverPicture(data);
+    };
 
     SocketUser.uploadCroppedPicture = async function (socket: SocketUser, data: Data) {
         if (!socket.uid || !(await privileges.users.canEdit(socket.uid, data.uid))) {
