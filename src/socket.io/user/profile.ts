@@ -1,19 +1,19 @@
-import { Socket } from 'socket.io';
 import * as user from '../../user';
 import * as privileges from '../../privileges';
 import * as plugins from '../../plugins';
 import * as sockets from '..';
 import * as api from '../../api';
 
+
 export interface SocketUserData {
     callerUid: string;
     uid: string;
 }
-  
+
 export interface SocketUserUpdateCoverData extends SocketUserData {
     cover: string;
 }
-  
+
 export interface SocketUserUploadCroppedPictureData extends SocketUserData {
     picture: string;
 }
@@ -23,7 +23,21 @@ export interface SocketUserToggleBlockData {
     blockeeUid: number;
 }
 
-export function SocketUser(SocketUser:any) {
+export interface Socket {
+    uid: string;
+}
+
+export interface SocketUserFunctions {
+    updateCover(socket: SocketUserData, data: SocketUserUpdateCoverData): Promise<any>;
+    uploadCroppedPicture(socket: SocketUserData, data: SocketUserData): Promise<any>;
+    removeCover(socket: SocketUserData, data: SocketUserData): Promise<any>;
+    toggleBlock(socket: SocketUserData, data: SocketUserToggleBlockData): Promise<any>;
+    exportProfile(socket: SocketUserData, data: SocketUserData): Promise<any>;
+    exportPosts(socket: SocketUserData, data: SocketUserData): Promise<any>;
+    exportUploads(socket: SocketUserData, data: SocketUserData): Promise<any>;
+}
+
+export function SocketUser(SocketUser:SocketUserFunctions) {
     SocketUser.updateCover = async function (socket: SocketUserData, data: SocketUserData) {
         if (!socket.uid) {
             throw new Error('[[error:no-privileges]]');
@@ -92,4 +106,4 @@ export function SocketUser(SocketUser:any) {
 
         api.users.generateExport(socket, { type, ...data });
     }
-};
+}
