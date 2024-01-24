@@ -42,7 +42,10 @@ export function SocketUser(SocketUser:SocketUserFunctions) {
         if (!socket.uid) {
             throw new Error('[[error:no-privileges]]');
         }
-        await user.isAdminOrGlobalModOrSelf(socket.uid, data.uid);
+        if (socket.uid && data.uid) {
+            await user.isAdminOrGlobalModOrSelf(socket.uid, data.uid);
+        }
+        // await user.isAdminOrGlobalModOrSelf(socket.uid, data.uid);
         await user.checkMinReputation(socket.uid, data.uid, 'min:rep:cover-picture');
         return await user.updateCoverPicture(data);
     };
