@@ -6,6 +6,25 @@ import * as plugins from '../../plugins';
 import * as sockets from '..';
 import * as api from '../../api';
 
+export interface SocketUserData {
+    uid: number;
+  }
+  
+  export interface SocketUserUpdateCoverData extends SocketUserData {
+    cover: string;
+  }
+  
+  export interface SocketUserUploadCroppedPictureData extends SocketUserData {
+    picture: string;
+  }
+  
+  export interface SocketUserRemoveCoverData extends SocketUserData {}
+  
+  export interface SocketUserToggleBlockData {
+    blockerUid: number;
+    blockeeUid: number;
+  }
+
 export function SocketUser(SocketUser:any) {
     SocketUser.updateCover = async function (socket, data) {
         if (!socket.uid) {
