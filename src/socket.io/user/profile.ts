@@ -91,7 +91,7 @@ export function SocketUser(SocketUser:SocketUserFunctions) {
         await doExport(socket, data, 'uploads');
     };
 
-    async function doExport(socket, data: SocketUserData, type) {
+    async function doExport(socket, data: SocketUserData, type: string) {
         sockets.warnDeprecated(socket, 'POST /api/v3/users/:uid/exports/:type');
 
         if (!socket.uid) {
